@@ -1,3 +1,7 @@
+const secrets = require('./secrets')
+process.env.GITHUB_CLIENT_ID = secrets.GITHUB_CLIENT_ID;
+process.env.GITHUB_CLIENT_SECRET = secrets.GITHUB_CLIENT_SECRET;
+
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -21,6 +25,7 @@ User.byToken = async(token)=> {
   try {
     const { id } = await jwt.verify(token, process.env.JWT);
     const user = await User.findByPk(id);
+    console.log('USER',user)
     if(user){
       return user;
     }
@@ -42,7 +47,17 @@ const GITHUB_ACCESS_TOKEN_FOR_USER_URL = 'https://api.github.com/user';
 //the authenticate methods is passed a code which has been sent by github
 //if successful it will return a token which identifies a user in this app
 User.authenticate = async(code)=> {
-  throw 'nooooo';
+      const response  = await axios.post('https://github.com/login/oauth/access_token',{
+          code:code,
+          client_id: process.env.GITHUB_CLIENT_ID,
+          client_secret: process.env.GITHUB_CLIENT_SECRET
+      },{
+          headers: {
+              accept: 'application/json'
+          }
+      })
+      return response.data
+      throw 'nooooo';
 };
 
 const syncAndSeed = async()=> {
