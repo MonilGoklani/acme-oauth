@@ -1,6 +1,12 @@
+try{
 const secrets = require('./secrets')
 process.env.GITHUB_CLIENT_ID = secrets.GITHUB_CLIENT_ID;
 process.env.GITHUB_CLIENT_SECRET = secrets.GITHUB_CLIENT_SECRET;
+}
+catch(ex){
+    console.log(ex)
+    console.log('YOU NEED ENVIRONMENT VARIABLES')
+}
 
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
